@@ -1,5 +1,3 @@
-## Hi there 👋
-
 <div align="center"> 
   <a href="mailto:pedro.sales.muniz@gmail.com">
     <img src="https://img.shields.io/badge/Gmail-333333?style=for-the-badge&logo=gmail&logoColor=red" />
@@ -12,11 +10,11 @@
   </a>
 </div>
 
-<h2 align="center">⚒️ Languages-Frameworks-Tools ⚒️</h2>
+<h2 align="center">Languages-Frameworks-Tools</h2>
 <br/>
 <div align="center">
-    <img src="https://skillicons.dev/icons?i=react,bootstrap,mui,html,css,vscode,github,figma,tailwind,git,r" />
-    <img src="https://skillicons.dev/icons?i=nodejs,python,javascript,typescript,express,firebase,mongodb,c,java,nextjs,mysql,flask" /><br>
+    <img src="https://skillicons.dev/icons?i=python,supabase,gcp,docker,github,vscode,github,mongodb,obsidian,postgres" />
+    <img src="https://skillicons.dev/icons?i=sklearn,tensorflow,fastapi,tailwind,opencv,nextjs,mongodb,mysql" /><br>
 </div>
 
 <div align="center">
