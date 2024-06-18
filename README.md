@@ -20,7 +20,7 @@
 <h2 align="center">Languages-Frameworks-Tools</h2>
 
 <div align="center">
-    <img src="https://skillicons.dev/icons?i=python,supabase,gcp,docker,github,vscode,github,mongodb,obsidian,postgres" />
+    <img src="https://skillicons.dev/icons?i=python,supabase,gcp,docker,github,vscode,mongodb,obsidian,postgres" />
     <img src="https://skillicons.dev/icons?i=sklearn,tensorflow,fastapi,tailwind,opencv,nextjs,mongodb,mysql" /><br>
 </div>
 
