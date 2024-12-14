@@ -18,6 +18,12 @@
 <br/>
 <h2 align="center">Languages-Frameworks-Tools</h2>
 <div align="center">
+    <img src="https://skillicons.dev/icons?i=python,supabase,gcp,docker,github,vscode,mongodb,obsidian,postgres" />
+    <img src="https://skillicons.dev/icons?i=sklearn,tensorflow,fastapi,tailwind,opencv,nextjs,mongodb,mysql" /><br>
+</div>
+
+<h2 align="center">Github Statistics</h2>
+<div align="center">
 <!--     <img src="https://github-readme-stats.vercel.app/api?username=pour-le-hommes&theme=vue-dark&show_icons=true&hide_border=true&count_private=true" alt="pour-le-hommes's Stats"> -->
     <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=pour-le-hommes&theme=vue-dark&show_icons=true&hide_border=true&layout=compact" alt="pour-le-hommes's Top Languages">
 </div>
