@@ -39,6 +39,33 @@
   
   <br/><br/><br/>
 </div>
+
+# My Personal System Architecture
+```mermaid
+graph TD
+    LifeUpSDK["LifeUp SDK"]
+    DesktopApp["Desktop App (full I/O)"]
+    MobileApp["Mobile App (read-only)"]
+    BE2["Second Serverless Backend (LifeUp)"]
+    BE1["First Serverless Backend (LLMs + LifeUp DB)"]
+    Supabase["Supabase"]
+    AppData["AppData (Local Conversations & Triggers)"]
+    GroqGemini["Groq, Gemini"]
+    GitHubAction["GitHub Action (Daily Report)"]
+
+    LifeUpSDK --> DesktopApp
+    LifeUpSDK --> MobileApp
+    DesktopApp <--> BE2
+    BE2 <--> Supabase
+    DesktopApp --> AppData
+    AppData --> BE2
+    MobileApp --> BE1
+    BE2 --> BE1
+    BE1 --> GroqGemini
+    GitHubAction --> BE2
+    GitHubAction --> BE1
+
+```
 <!--
 **pour-le-hommes/pour-le-hommes** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
