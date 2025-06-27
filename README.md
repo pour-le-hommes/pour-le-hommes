@@ -44,8 +44,8 @@
 ```mermaid
 graph TD
     LifeUpSDK["LifeUp SDK"]
-    DesktopApp["Desktop App (full I/O)"]
-    MobileApp["Mobile App (read-only)"]
+    TauriApp["Desktop App and Mobile App (full I/O)"]
+    Website["Personal Website pourterra.com"]
     BE2["Second Serverless Backend (LifeUp)"]
     BE1["First Serverless Backend (LLMs + LifeUp DB)"]
     Supabase["Supabase"]
@@ -53,19 +53,31 @@ graph TD
     GroqGemini["Groq, Gemini"]
     GitHubAction["GitHub Action (Daily Report)"]
 
-    LifeUpSDK --> DesktopApp
-    LifeUpSDK --> MobileApp
-    DesktopApp <--> BE2
-    BE2 <--> Supabase
-    DesktopApp --> AppData
-    AppData --> BE2
-    MobileApp --> BE1
-    BE2 --> BE1
-    BE1 --> GroqGemini
-    GitHubAction --> BE2
-    GitHubAction --> BE1
-
+    LifeUpSDK -- Fetch LifeUp Data --> TauriApp
+    TauriApp -- Send Tasks (Only Desktop) --> LifeUpSDK
+    TauriApp <-- For LLM Conversations --> BE1
+    TauriApp <-- For LifeUp Analytics --> BE2
+    TauriApp <-- For LLM and Analytics Caching --> AppData
+    Website <-- For LLM Conversations --> BE1
+    BE1 <-- For GenAI Generation --> GroqGemini
+    BE1 <-- For GenAI Data --> Supabase
+    BE2 <-- For Email Report Generation --> BE1
+    BE2 <-- For LifeUp Data --> Supabase
+    GitHubAction -- Send Email Report Request --> BE2
 ```
+#### Connection Semantics
+
+- `Send`: Subject A owns the data and actively transmits it to Subject B without solicitation. B does not request anything—A initiates the transfer. B only acknowledges receipt (success/failure), not transformation or response.
+- `Fetch`: Subject B owns the data, and Subject A initiates a request to receive it. B does not learn anything about A in the process—it simply fulfills the request. The interaction is one-way in function but initiated by the consumer.
+- `For`: A and B engage in mutual processing. The request leads to transformation or computation on both ends. Data, context, or state changes are involved in either or both systems. This is a purpose-driven collaboration.
+- `LLM (Large Language Model)`: Narrow-scope, text-focused generative AI. Includes dialogue, summarization, and RAG operations like vector embedding or function calling—as long as they remain in the service of textual reasoning or output. Image, speech, or video tasks are excluded.
+- `GenAI (Generative AI)`: Broad-scope, multi-modal generation. Encompasses all generative domains: text, audio, image, video. LLMs are a subset of GenAI, but not synonymous with it. Use when referring to the infrastructure or request path involving any generative capability.
+
+#### Device Context
+
+- **TauriApp (Desktop only)**: Full read/write access to LifeUp SDK
+- **TauriApp (Mobile)**: Read-only to LifeUp SDK
+
 <!--
 **pour-le-hommes/pour-le-hommes** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
