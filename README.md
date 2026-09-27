@@ -43,40 +43,79 @@
 # My Personal System Architecture
 ```mermaid
 graph TD
-    LifeUpSDK["LifeUp SDK"]
-    TauriApp["Desktop App and Mobile App (full I/O)"]
-    Website["Personal Website pourterra.com"]
-    BE2["Second Serverless Backend (LifeUp)"]
-    BE1["First Serverless Backend (LLMs + LifeUp DB)"]
-    Supabase["Supabase"]
-    AppData["AppData (Local Conversations & Triggers)"]
-    GroqGemini["Groq, Gemini"]
-    GitHubAction["GitHub Action (Daily Report)"]
+    subgraph Clients["Clients"]
+        TauriApp["Desktop App and Mobile App (full I/O)"]
+        AppData["AppData (Local Conversations & Triggers)"]
+        Website["Personal Website pourterra.com"]
+    end
+    subgraph Backends["Serverless Backends"]
+        BE1["First Serverless Backend (LLMs)"]
+        BE2["Second Serverless Backend (LifeUp)"]
+        BlogBE["Blog Serverless Backend"]
+    end
+    subgraph Agents["Agent Tooling"]
+        TerraCode["TerraCode (AI Coding Agent)"]
+        TerraMCP["TerraMCP (Personal MCP Hub)"]
+        LifeUpMCP["LifeUp MCP (Local Network Bridge)"]
+    end
+    subgraph Libraries["Libraries"]
+        AreteEngine["Arete Engine (Gamification Rules)"]
+    end
+    subgraph External["External Services"]
+        LifeUpSDK["LifeUp SDK"]
+        Supabase["Supabase"]
+        LLMProviders["Groq, Gemini, OpenRouter, Cloudflare"]
+        EmailService["Email Service (Mailgun)"]
+        Obsidian["Obsidian Vaults"]
+        GitHubAction["GitHub Action (Daily Report)"]
+    end
 
     LifeUpSDK -- Fetch LifeUp Data --> TauriApp
-    TauriApp -- Send Tasks (Only Desktop) --> LifeUpSDK
+    TauriApp -- Send Tasks --> LifeUpSDK
+    TauriApp -- Send LifeUp Data Sync --> BE2
     TauriApp <-- For LLM Conversations --> BE1
-    TauriApp <-- For LifeUp Analytics --> BE2
+    TauriApp <-- For LifeUp Analytics & Pending Tasks Drain --> BE2
     TauriApp <-- For LLM and Analytics Caching --> AppData
     Website <-- For LLM Conversations --> BE1
-    BE1 <-- For GenAI Generation --> GroqGemini
+    BlogBE -- Fetch Blog Posts --> Website
+    BlogBE <-- For Blog Data --> Supabase
+    BE1 <-- For GenAI Generation --> LLMProviders
     BE1 <-- For GenAI Data --> Supabase
+    BE2 -- Fetch Tasks for LLM Tools --> BE1
     BE2 <-- For Email Report Generation --> BE1
     BE2 <-- For LifeUp Data --> Supabase
+    BE2 -- Send Email Report --> EmailService
     GitHubAction -- Send Email Report Request --> BE2
+    TerraCode <-- For Agent Tools --> TerraMCP
+    TerraCode <-- For Agent Tools --> LifeUpMCP
+    TerraCode <-- For GenAI Generation --> LLMProviders
+    TerraCode -- Fetch Sessions, Memory & Metrics --> TerraMCP
+    TerraMCP -- Send Pending Tasks --> BE2
+    BE2 -- Fetch Tasks & Skills --> TerraMCP
+    TerraMCP <-- For Notes --> Obsidian
+    LifeUpSDK -- Fetch Tasks & Skills --> LifeUpMCP
+    LifeUpMCP -- Send Tasks --> LifeUpSDK
+    AreteEngine -. Reward Formulas .-> TauriApp
+    AreteEngine -. Reward Formulas .-> LifeUpMCP
 ```
 #### Connection Semantics
 
 - `Send`: Subject A owns the data and actively transmits it to Subject B without solicitation. B does not request anything—A initiates the transfer. B only acknowledges receipt (success/failure), not transformation or response.
 - `Fetch`: Subject B owns the data, and Subject A initiates a request to receive it. B does not learn anything about A in the process—it simply fulfills the request. The interaction is one-way in function but initiated by the consumer.
 - `For`: A and B engage in mutual processing. The request leads to transformation or computation on both ends. Data, context, or state changes are involved in either or both systems. This is a purpose-driven collaboration.
+- `Dotted line`: A is a library that B bundles at build time. No request happens at runtime; B runs A's logic locally, so B only picks up A's changes when it upgrades to a newer version.
 - `LLM (Large Language Model)`: Narrow-scope, text-focused generative AI. Includes dialogue, summarization, and RAG operations like vector embedding or function calling—as long as they remain in the service of textual reasoning or output. Image, speech, or video tasks are excluded.
 - `GenAI (Generative AI)`: Broad-scope, multi-modal generation. Encompasses all generative domains: text, audio, image, video. LLMs are a subset of GenAI, but not synonymous with it. Use when referring to the infrastructure or request path involving any generative capability.
 
 #### Device Context
 
-- **TauriApp (Desktop only)**: Full read/write access to LifeUp SDK
-- **TauriApp (Mobile)**: Read-only to LifeUp SDK
+- **TauriApp (Desktop and Mobile)**: Full read/write access to LifeUp SDK, and writes to Supabase through both serverless backends
+
+#### Agent Context
+
+- **TerraMCP**: Never touches the LifeUp SDK directly. It queues tasks in the Second Serverless Backend, and the TauriApp drains that queue into LifeUp on its next sync.
+- **LifeUp MCP**: Talks to the LifeUp SDK directly over the local network, so it only works when the phone is reachable.
+- **Arete Engine**: The single source of truth for EXP and Gold. Both the TauriApp and LifeUp MCP calculate rewards with it before sending a task.
 
 <!--
 **pour-le-hommes/pour-le-hommes** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
